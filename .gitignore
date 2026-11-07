@@ -1,0 +1,15 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# Datos generados
+data/*.csv
+data/*.rds
+
+# Credenciales
+.Renviron
+config/credenciales.yml
+
+# Repositorio del profesor
+base/
