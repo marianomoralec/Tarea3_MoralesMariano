@@ -4,6 +4,8 @@ format: html
 editor: visual
 ---
 
+## Hoja de Respuestas
+
 ## Ejercicio 1: Alertas por ventana móvil
 
 ```{r}
@@ -147,15 +149,100 @@ Interpretación del gráfico: Los cantones con mayor MAD presentan relativamente
 
 ```{r}
 #Obtengo la tasa anual de los parámetros
-tasa.anual <- parametros |>
-  filter(parametro=="tasa.anual") |>
-  pull(valor) |>
-  as.numeric()
+tasa.anual <- as.numeric(
+  parametros$valor[parametros$parametro=="tasa.anual"]
+)
 #Obtengo el canal seleccionado
-canal.interes <- parametros |>
-  filter(parametro == "canal.interes") |>
-  pull(valor)
+canal.interes <- parametros$valor[
+  parametros$parametro=="canal.interes"
+]
 #Ejecuto la función con mis parámetros
 resultado.ej3 <- valor.acumulado(tx, tasa.anual, canal.interes)
+
+#3A: Valor acumulado con mis parámetros
+resultado.3A <- resultado.ej3$va
+#3B: Intereses generados con mis parámetros
+resultado.3B <- resultado.ej3$interes
+#3C: Valor acumulado para App con tasa anual del 6 %
+resultado.3C <- valor.acumulado(tx, 0.06, "App")$va
+
+#Muestro las tres respuestas
+cat("RESULTADO_3A:", resultado.3A, "\n")
+cat("RESULTADO_3B:", resultado.3B, "\n")
+cat("RESULTADO_3C:", resultado.3C, "\n")
+
+#Grafico del Ejercicio 3
+
+#Calculo el valor acumulado de cada depósito mensual
+datos.grafico3 <- resultado.ej3$tabla |>
+  dplyr::mutate(
+    monto.acumulado=monto*factor
+  )
+#Organizo los datos para el gráfico
+datos.grafico3 <- datos.grafico3 |>
+  tidyr::pivot_longer(
+    cols=c(monto, monto.acumulado),
+    names_to="tipo",
+    values_to="valor"
+  )
+
+#Creo el gráfico
+grafico.ej3 <- ggplot(
+  datos.grafico3,
+  aes(x = factor(mes), y = valor, fill = tipo)
+) +
+  geom_col(position = "dodge") +
+  scale_fill_manual(
+    values = c(
+      "monto" = "steelblue",
+      "monto.acumulado" = "darkorange"
+    ),
+    labels = c(
+      "monto" = "Monto depositado",
+      "monto.acumulado" = "Valor acumulado"
+    )
+  ) +
+  labs(
+    title = paste("Valor acumulado por mes - Canal", canal.interes),
+    x = "Mes",
+    y = "Monto en colones",
+    fill = "Concepto"
+  ) +
+  theme_minimal()
+
+print(grafico.ej3)
+```
+
+```{r}
+#| echo: false
+#| output: asis
+
+respuestas <- c(
+  paste0("RESULTADO_1A = ", resultado.1a),
+  paste0("RESULTADO_1B = ", resultado.1b),
+  paste0("RESULTADO_1C = ", resultado.1c),
+  paste0("RESULTADO_2A = ", sprintf("%.4f", resultado.2A)),
+  paste0("RESULTADO_2B = ", resultado.2B),
+  paste0("RESULTADO_2C = ", resultado.2C),
+  paste0("RESULTADO_2D = ", resultado.2D),
+  paste0("RESULTADO_3A = ", sprintf("%.2f", resultado.3A)),
+  paste0("RESULTADO_3B = ", sprintf("%.2f", resultado.3B)),
+  paste0("RESULTADO_3C = ", sprintf("%.2f", resultado.3C))
+)
+
+cat(
+  '<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const destino = document.getElementById("hoja-de-respuestas");
+    if (destino) {
+      const bloque = document.createElement("pre");
+      bloque.textContent = ',
+  jsonlite::toJSON(paste(respuestas, collapse = "\n"), auto_unbox = TRUE),
+  ';
+      destino.after(bloque);
+    }
+  });
+  </script>'
+)
 
 ```
