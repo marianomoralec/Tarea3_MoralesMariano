@@ -13,3 +13,4 @@ config/credenciales.yml
 
 # Repositorio del profesor
 base/
+excel/~$*.xlsx
