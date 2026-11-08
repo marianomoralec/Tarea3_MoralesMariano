@@ -1,0 +1,51 @@
+---
+title: "Tarea 3 - Herramientas de Ciencia de Datos I"
+format: html
+editor: visual
+---
+
+```{r}
+library(dplyr)
+source("cod/funciones_tarea3.R")
+#Ahora leo los parametros personalizados
+parametros <- read.csv("config/parametros_tarea3.csv", sep = ";")
+
+#Obtengo la ventana
+ventana <- parametros |>
+  filter(parametro == "ventana") |>
+  pull(valor) |>
+  as.numeric()
+
+#Obtengo k.alerta
+k.alerta <- parametros |>
+  filter(parametro == "k.alerta") |>
+  pull(valor) |>
+  as.numeric()
+
+#Ahora leo las transacciones
+tx <- read.csv("data/transacciones_2025.csv", sep=";")
+
+```
+
+```{r}
+#Ejecuto con mis parametros
+resultado.ej1 <- alerta.movil(tx, ventana, k.alerta)
+
+#RESULTADO_1A: cantidad de días con alerta
+resultado.1a <- sum(resultado.ej1$alerta, na.rm = TRUE)
+
+#RESULTADO_1B: fecha de la primera alerta
+resultado.1b <- resultado.ej1 |>
+  filter(alerta == TRUE) |>
+  pull(fecha) |>
+  first()
+
+#RESULTADO_1C: alertas con ventana = 7 y k.alerta = 2
+resultado.1c <- alerta.movil(tx, 7, 2) |>
+  pull(alerta) |>
+  sum(na.rm = TRUE)
+
+cat("RESULTADO_1A:", resultado.1a, "\n")
+cat("RESULTADO_1B:", resultado.1b, "\n")
+cat("RESULTADO_1C:", resultado.1c, "\n")
+```
