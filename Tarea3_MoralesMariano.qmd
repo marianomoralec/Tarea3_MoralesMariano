@@ -53,6 +53,25 @@ resultado.1c <- alerta.movil(tx, 7, 2) |>
 cat("RESULTADO_1A:", resultado.1a, "\n")
 cat("RESULTADO_1B:", resultado.1b, "\n")
 cat("RESULTADO_1C:", resultado.1c, "\n")
+
+#Grafico del ejercicio 1: transacciones diarias y alertas
+library(ggplot2)
+
+grafico.ej1 <- ggplot(resultado.ej1, aes(x = as.Date(fecha), y = n.tx)) +
+  geom_line(color = "steelblue", linewidth = 0.6) +
+  geom_point(
+    data = subset(resultado.ej1, !is.na(alerta) & alerta),
+    color = "red",
+    size = 1.8
+  ) +
+  labs(
+    title = "Transacciones diarias y alertas",
+    x = "Fecha",
+    y = "Número de transacciones"
+  ) +
+  theme_minimal()
+
+print(grafico.ej1)
 ```
 
 ## Ejercicio 2: Ley de Benford
@@ -67,22 +86,59 @@ canal.benford <- parametros$valor[
 montos <- tx$monto_crc[tx$canal==canal.benford]
 resultado.2A <- benford.mad(montos)
 
-# 2B y 2C: Analisis por canton
+#2B y 2C: Analisis por canton
 resultado.cantones <- benford.canton(
   tx, canal.benford, cantones
 )
 resultado.2B <- resultado.cantones$canton[1]
 resultado.2C <- sum(resultado.cantones$mad>0.015)
-
-# 2D: Canton con mayor MAD en Web
+#2D: Canton con mayor MAD en Web
 resultado.web <- benford.canton(
   tx, "Web", cantones
 )
 resultado.2D <- resultado.web$canton[1]
-
 # Mostrar las cuatro respuestas
 cat("RESULTADO_2A =", sprintf("%.4f", resultado.2A), "\n")
 cat("RESULTADO_2B =", resultado.2B, "\n")
 cat("RESULTADO_2C =", resultado.2C, "\n")
 cat("RESULTADO_2D =", resultado.2D, "\n")
+
+#Grafico del ejercicio 2
+library(ggplot2)
+#Selecciono los montos positivos del canal personalizado
+datos_canal <- tx[
+  tx$canal==canal.benford &
+    !is.na(tx$monto_crc) &
+    tx$monto_crc>0,
+]
+#Obtengo el primer dígito de cada monto
+digitos <- floor(
+  datos_canal$monto_crc/10^floor(log10(datos_canal$monto_crc))
+)
+#Calculo las proporciones observadas
+observado <- tabulate(digitos, nbins=9)/length(digitos)
+#Calculo las proporciones teóricas de Benford
+teorico <- log10(1+1/(1:9))
+#Ahora si el grafico
+datos_grafico <- data.frame(
+  digito=1:9,
+  observado=observado,
+  teorico=teorico
+)
+grafico_benford <- ggplot(datos_grafico, aes(x = digito)) +
+  geom_col(aes(y = observado), fill = "steelblue", width = 0.65) +
+  geom_line(aes(y = teorico), color = "red", linewidth = 1) +
+  geom_point(aes(y = teorico), color = "red", size = 2) +
+  scale_x_continuous(breaks = 1:9) +
+  labs(
+    title = paste("Ley de Benford - Canal", canal.benford),
+    x = "Primer dígito",
+    y = "Proporción"
+  ) +
+  theme_minimal()
+print(grafico_benford)
+
+
 ```
+
+Interpretación del gráfico: Los cantones con mayor MAD presentan relativamente pocas transacciones, como Guácimo con 195, por lo que la desviación podría deberse al tamaño reducido de la muestra y no necesariamente a fraude
