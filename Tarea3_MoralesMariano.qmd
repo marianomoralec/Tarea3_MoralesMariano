@@ -4,6 +4,8 @@ format: html
 editor: visual
 ---
 
+## Ejercicio 1: Alertas por ventana móvil
+
 ```{r}
 library(dplyr)
 source("cod/funciones_tarea3.R")
@@ -24,6 +26,9 @@ k.alerta <- parametros |>
 
 #Ahora leo las transacciones
 tx <- read.csv("data/transacciones_2025.csv", sep=";")
+
+#Ahora leo los cantones
+cantones <- read.csv("data/cantones.csv")
 
 ```
 
@@ -48,4 +53,36 @@ resultado.1c <- alerta.movil(tx, 7, 2) |>
 cat("RESULTADO_1A:", resultado.1a, "\n")
 cat("RESULTADO_1B:", resultado.1b, "\n")
 cat("RESULTADO_1C:", resultado.1c, "\n")
+```
+
+## Ejercicio 2: Ley de Benford
+
+```{r}
+#Obtengo el canal desde el archivo de parametros
+canal.benford <- parametros$valor[
+  parametros$parametro=="canal.benford"
+]
+
+#2A: MAD general del canal seleccionado
+montos <- tx$monto_crc[tx$canal==canal.benford]
+resultado.2A <- benford.mad(montos)
+
+# 2B y 2C: Analisis por canton
+resultado.cantones <- benford.canton(
+  tx, canal.benford, cantones
+)
+resultado.2B <- resultado.cantones$canton[1]
+resultado.2C <- sum(resultado.cantones$mad>0.015)
+
+# 2D: Canton con mayor MAD en Web
+resultado.web <- benford.canton(
+  tx, "Web", cantones
+)
+resultado.2D <- resultado.web$canton[1]
+
+# Mostrar las cuatro respuestas
+cat("RESULTADO_2A =", sprintf("%.4f", resultado.2A), "\n")
+cat("RESULTADO_2B =", resultado.2B, "\n")
+cat("RESULTADO_2C =", resultado.2C, "\n")
+cat("RESULTADO_2D =", resultado.2D, "\n")
 ```
