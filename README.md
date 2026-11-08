@@ -23,14 +23,29 @@ El proyecto desarrolla tres ejercicios mediante R y Excel:
 - `info/figuras/`: gráficos generados.
 - `README.md`: descripción e instrucciones del proyecto.
 
+
 ## Instrucciones para reproducir el análisis
 
-1. Descargar o clonar el repositorio de GitHub.
-2. Abrir el archivo `.Rproj` en RStudio.
-3. Instalar los paquetes de R necesarios para ejecutar el proyecto.
-4. Revisar los parámetros en `config/parametros_tarea3.csv`.
-5. Abrir el archivo `.qmd` y utilizar Render para generar el informe HTML.
-6. Abrir el archivo de Excel de la carpeta `excel/`.
-7. Actualizar las consultas de Power Query cuando corresponda.
+1. Descargar o clonar este repositorio de GitHub.
 
-Los resultados de los tres ejercicios se presentan en el informe HTML y en la hoja `Respuestas` del archivo de Excel.
+2. Abrir la carpeta del proyecto en RStudio.
+
+3. Desde la carpeta principal del proyecto, clonar la base del profesor:
+
+   ```bash
+   git clone https://github.com/PotoyJuarez/CA0204-Tarea3-base.git base
+   ```
+
+4. Ejecutar el archivo `cod/01_datos.R` para generar los datos
+   correspondientes al carné C5H565.
+
+5. Verificar los parámetros en `config/parametros_tarea3.csv`.
+
+6. Abrir el archivo `.qmd` del proyecto y utilizar Render para
+   generar el informe HTML.
+
+7. Abrir el archivo Excel de la carpeta `excel/` y actualizar
+   las consultas de Power Query cuando corresponda.
+
+Los resultados de los tres ejercicios se presentan en el informe
+HTML y en la hoja `Respuestas` del archivo de Excel.
