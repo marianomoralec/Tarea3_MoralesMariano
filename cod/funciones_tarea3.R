@@ -89,3 +89,36 @@ benford.canton <- function(df, canal, cantones) {
 
   return(resultado)
 }
+
+# Ejercicio 3: Valor acumulado e intereses
+# Calcula el valor acumulado de las transacciones de un canal
+# al 31 de diciembre, con depósitos al final de cada mes.
+valor.acumulado <- function(df, tasa.anual, canal) {
+  #Primero calculo la tasa mensual equivalente
+  tasa.mensual <- (1+tasa.anual)^(1/12)-1
+  #Filtro las transacciones del canal seleccionado
+  datos <- df[df$canal==canal, ]
+  #Obtengo el mes de cada transacción
+  datos$mes <- as.integer(format(as.Date(datos$fecha), "%m"))
+  #Sumo los montos de cada mes
+  montos.mensuales <- datos |>
+    dplyr::group_by(mes) |>
+    dplyr::summarise(monto=sum(monto_crc, na.rm=TRUE)) |> 
+    tidyr::complete(mes=1:12, fill=list(monto=0))
+  #Calculo el factor de acumulación de cada mes
+  montos.mensuales <- montos.mensuales |>
+    dplyr::mutate(factor=(1+tasa.mensual)^(12-mes))
+  #Ahora calculo el valor acumulado
+  va <- sum(montos.mensuales$monto*montos.mensuales$factor)
+  #Calculo el total depositado
+  total.depositado <- sum(montos.mensuales$monto)
+  #Calculo los intereses ganados
+  interes <- va-total.depositado
+  #Devuelvo los resultados
+  return(list(
+    tabla=montos.mensuales,
+    tasa.mensual=tasa.mensual,
+    va=va,
+    interes=interes
+  ))
+}

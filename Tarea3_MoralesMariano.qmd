@@ -142,3 +142,20 @@ print(grafico_benford)
 ```
 
 Interpretación del gráfico: Los cantones con mayor MAD presentan relativamente pocas transacciones, como Guácimo con 195, por lo que la desviación podría deberse al tamaño reducido de la muestra y no necesariamente a fraude
+
+## Ejercicio 3: Valor acumulado e intereses
+
+```{r}
+#Obtengo la tasa anual de los parámetros
+tasa.anual <- parametros |>
+  filter(parametro=="tasa.anual") |>
+  pull(valor) |>
+  as.numeric()
+#Obtengo el canal seleccionado
+canal.interes <- parametros |>
+  filter(parametro == "canal.interes") |>
+  pull(valor)
+#Ejecuto la función con mis parámetros
+resultado.ej3 <- valor.acumulado(tx, tasa.anual, canal.interes)
+
+```
