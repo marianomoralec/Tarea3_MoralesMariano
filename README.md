@@ -5,7 +5,7 @@
 **Carné:** C5H565
 
 ## Descripción
-
+Para la asistente: los parametros que me genero mi carne son los mismos a los genericos (7, 2), digo esto para evitar confusiones a la hora de revisar mi trabajo.
 Proyecto correspondiente a la Tarea 3 del curso Herramientas de Ciencia de Datos I.
 
 El proyecto desarrolla tres ejercicios mediante R y Excel:
